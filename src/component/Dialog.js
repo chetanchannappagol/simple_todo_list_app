@@ -1,4 +1,5 @@
-import React from "react";
+import React,{useEffect, useState,useContext} from "react";
+import TodoContext from "../Context/TodoContext";
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -15,10 +16,35 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function ADialog(props) {
-
+  useEffect(() => {
+    setDetails({
+      subject: props.selected && props.selected.subject,
+    description: props.selected && props.selected.description,
+    dateTime: props.selected && props.selected.dateTime,
+    id: props.selected && props.selected.id,
+    })
+  }, [props.selected])
+  const context = useContext(TodoContext);
+  const [details, setDetails] = useState({
+    subject: props.selected && props.selected.subject,
+    description: props.selected && props.selected.description,
+    dateTime: props.selected && props.selected.dateTime,
+    id: props.selected && props.selected.id,
+  });
+  const onChangeHandler = (e) => {
+    setDetails({
+      ...details,
+      [e.target.name]: e.target.value,
+    });
+  };
   const handleClose = () => {
     props.setOpenEdit(false);
   };
+  const onSubmit = () => {
+    context.editDetails(details);
+    props.setOpenEdit(false);
+  };
+  
 console.log(props)
   return (
     <Dialog
@@ -28,7 +54,7 @@ console.log(props)
       onClose={handleClose}
       aria-describedby="alert-dialog-slide-description"
       maxWidth='sm'
-      fullWidth='false'
+      fullWidth={true}
     >
       <DialogTitle>{'Edit Todo'}</DialogTitle>
       <DialogContent>
@@ -46,11 +72,11 @@ console.log(props)
             name="subject"
             type="text"
             placeholder="subject"
-            // onChange={(e) => onChangeHandler(e)}
+            onChange={(e) => onChangeHandler(e)}
             id="outlined-basic"
             // label="subject"
             variant="outlined"
-            value={props.selected && props.selected.subject}
+            value={details.subject}
             sx={{
               width: "90%",
             }}
@@ -61,10 +87,10 @@ console.log(props)
             name="description"
             type="text"
             placeholder="description"
-            // onChange={(e) => onChangeHandler(e)}
+            onChange={(e) => onChangeHandler(e)}
             id="outlined-basic"
             // label="description"
-            value={props.selected && props.selected.description}
+            value={details.description}
             variant="outlined"
             sx={{
               width: "90%",
@@ -76,10 +102,10 @@ console.log(props)
             name="dateTime"
             type="datetime-local"
             // placeholder="subject"
-            // onChange={(e) => onChangeHandler(e)}
+            onChange={(e) => onChangeHandler(e)}
             id="outlined-basic"
             // label="Outlined"
-            value={props.selected && props.selected.dateTime}
+            value={details.dateTime}
             variant="outlined"
             sx={{
               width: "90%",
@@ -95,7 +121,7 @@ console.log(props)
         </DialogContentText> */}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Confirm</Button>
+        <Button onClick={onSubmit}>Confirm</Button>
         <Button onClick={handleClose}>Cancel</Button>
       </DialogActions>
     </Dialog>

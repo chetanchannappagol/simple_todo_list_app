@@ -1,4 +1,5 @@
-import React from "react";
+import React,{useContext} from "react";
+import TodoContext from "../Context/TodoContext";
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -15,11 +16,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function DeleteDialog(props) {
+  const context = useContext(TodoContext);
 
   const handleClose = () => {
     props.setOpenDelete(false);
   };
-console.log(props)
+  const onDelete = () => {
+    context.deleteDetails(props.selected);
+    props.setOpenDelete(false);
+  };
   return (
     <Dialog
       open={props.openDelete}
@@ -34,18 +39,18 @@ console.log(props)
       <DialogContent>
         <DialogContentText id="alert-dialog-slide-description">
           <Typography variant="subtitle1" >
-              Subject  {' '} : {' '} {props.selected.subject} 
+              Subject  {' '} : {' '} {props.selected && props.selected.subject} 
               </Typography>
               <Typography variant="subtitle1" >
-              Description  {' '} : {' '} {props.selected.description} 
+              Description  {' '} : {' '} {props.selected && props.selected.description} 
               </Typography>
               <Typography variant="subtitle1" >
-              Date & Time  {' '} : {' '} {props.selected.dateTime} 
+              Date & Time  {' '} : {' '} {props.selected && props.selected.dateTime} 
               </Typography>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Confirm</Button>
+        <Button onClick={onDelete}>Confirm</Button>
         <Button onClick={handleClose}>Cancel</Button>
       </DialogActions>
     </Dialog>
